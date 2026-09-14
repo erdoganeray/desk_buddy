@@ -1,0 +1,21 @@
+# KiCad
+**/*-backups/
+_autosave-*
+*.kicad_pcb-bak
+*.kicad_sch-bak
+*.bak
+*.lck
+fp-info-cache
+*.000
+*.rpt
+*.net
+plot/
+gerber/
+*-cache.lib
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Editor
+.vscode/
