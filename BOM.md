@@ -20,14 +20,14 @@ Bu liste, sipariş/tedarik görselleri ve kullanıcı teyidiyle oluşturuldu. Di
 | Li-Ion Charger IC | **BQ24075RGTR** (TI) | VQFN-16 (3x3) | 1 | ✅ | DPPM (dynamic power path management) destekli — USB varken sistem USB'den beslenir + pil şarj olur, USB çıkınca kesintisiz pile geçer. Pin planı: `schematic-notes.md` |
 | AP2112K-3.3TRG1 | AP2112K-3.3TRG1 | SOT25 | 10 | ✅ | 3.3V LDO regülatör, 600mA |
 | USBLC6-2SC6 | USBLC6-2SC6 | SOT23-6 | 10 | ✅ | USB D+/D- için TVS/ESD koruma diyot dizisi |
-| N-Kanal MOSFET | **AO3400A** | SOT-23-3 | 10 | ✅ | Titreşim motoru sürücüsü (low-side switch) |
+| N-Kanal MOSFET | **AO3400A** | SOT-23-3 | 10 | ✅ | Titreşim motoru + LCD backlight sürücüsü (2x low-side switch) |
 | BZX55C3V6_AY_10001 | BZX55C3V6 | DO-35 (THT) | 12 | ✅ | 3.6V zener diyot |
 
 ## Ekran
 
 | Komponent | Ürün Kodu | Paket | Adet | Elimde mi? | Not |
 |---|---|---|---|---|---|
-| 2.8" ILI9341 dokunmatik LCD | — | SPI modül, 240x320 | 1 | ✅ | Dokunmatik + SPI arayüz |
+| 2.8" ILI9341 dokunmatik LCD | — | SPI modül, 240x320 | 1 | ✅ | Rezistif dokunmatik + SPI, güç girişi 3.3V/5V (satıcı spec teyitli), VCC 3.3V rayında, LED (backlight) OUT/pil rayında (AO3400A ile) |
 
 ## Sensörler
 
@@ -37,6 +37,7 @@ Bu liste, sipariş/tedarik görselleri ve kullanıcı teyidiyle oluşturuldu. Di
 | AHT20+BMP280 sıcaklık/nem/basınç modülü | — | Modül | 1 | ✅ | Pinout: VDD,SDA,GND,SCL — 4-pin JST ile bağlanacak |
 | 5mm LDR (foto direnç) | — | THT, 5mm | ? | ✅ | Muhtemelen board üstü (voltage divider + ADC), ortam ışığına göre parlaklık ayarı adayı |
 | TTP223 kapasitif dokunmatik sensör | TTP223 | Modül/SOT23-6 | 2 | ✅ | Üründe 2 adet kullanılacak şekilde planlanmıştı — dokunma etkileşimi (örn. "okşama" algısı) |
+| MPU6050 6-eksen ivme/jiroskop modülü | MPU6050 | Modül (GY-521 tipi) | 1 | ✅ | I2C, adres 0x68 (AD0 low) — 4-pin JST ile bağlanacak, sonradan hatırlandı |
 
 ## Ses
 
@@ -103,4 +104,6 @@ Bu üçü orijinal tasarımda vardı ama şu an elimizde değil — arkadaşa ve
   - Charger CHG/PGOOD LED dirençleri = **1.5kΩ x2** (OUT→R→LED→CHG/PGOOD şeklinde, pull-up değil seri)
   - Bypass kondansatörleri: IN→VSS **1µF**, BAT→VSS **4.7µF**, OUT→VSS **4.7µF** (seramik)
   - LDR voltage divider direnci
+  - Pil voltajı sense divider: 100kΩ + 100kΩ (BAT → GPIO3/ADC1_CH2)
+  - ESP32-S3 VDD3P3 bulk kapasitörü: 22-47µF (WiFi TX akım patlamaları için, Espressif önerisi)
   - Titreşim motoru için flyback diyot (küçük Schottky, örn. BAT54) — BOM'da yok, ayrıca temin edilecek

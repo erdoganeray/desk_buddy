@@ -5,21 +5,22 @@ Bu dosya, kaybolan orijinal tasarımın hafızadan + elimizdeki BOM'dan (`BOM.md
 ## Blok diyagramı (taslak)
 
 ```
-LiPo Pil (PX10303S 3.7V 1000mAh) ──> BQ24075RGTR (VQFN-16) ──> OUT (DPPM) ──> AP2112K-3.3 LDO ──> 3.3V rayı
-                 ^                                                     │
-USB-C (USB4110) ─┘ IN (VBUS, şarj girişi)                              ├─> ESP32-S3-WROOM-1-N8R2
-   │                                                                   ├─> ILI9341 LCD (dokunmatik)
-   USBLC6-2SC6 (D+/D- ESD)                                             ├─> WS2812B LED(ler)
-                                                                        ├─> MAX98357A (I2S) -> Hoparlör (JST)
-                                                                        └─> AO3400A -> Titreşim motoru (JST)
+LiPo Pil (PX10303S 3.7V 1000mAh) ──> BQ24075RGTR (VQFN-16) ──> OUT (DPPM) ──┬─> AP2112K-3.3 LDO ──> 3.3V rayı ──> ESP32-S3, LCD+touch, sensörler
+                 ^                                                         │
+USB-C (USB4110) ─┘ IN (VBUS, şarj girişi)                                  ├─> WS2812B LED(ler) [3.3V değil, OUT'tan — güç bütçesi kararı]
+   │                                                                       ├─> MAX98357A (I2S) -> Hoparlör (JST)
+   USBLC6-2SC6 (D+/D- ESD)                                                 ├─> AO3400A -> Titreşim motoru (JST)
+                                                                            └─> AO3400A -> LCD Backlight (LED pini, VCC lojik hattı ayrı/3.3V'ta)
 
-ESP32-S3 ── I2C ── JST 2.0mm header'lar ── VL6180X (TOF050C), AHT20+BMP280, + 1x BOŞ/genişletme header
+ESP32-S3 ── I2C0 (GPIO8/9) ── JST 2.0mm header'lar ── VL6180X (TOF050C), AHT20+BMP280, MPU6050
+ESP32-S3 ── I2C1 (GPIO42/47) ── 2x JST 2.0mm header (harici genişletme bus'ı, izole)
 ESP32-S3 ── tek hat (data, GPIO-A) ── kart üstü WS2812B(ler)
 ESP32-S3 ── tek hat (data, GPIO-B, ayrı) ── JST 2.0mm header ── harici WS2812B (~4 LED, seri)
 ESP32-S3 ── dijital giriş x2 (JST) ── TTP223 x2 (dokunmatik buton)
 ESP32-S3 ── ADC (JST) ── LDR (harici)
-ESP32-S3 ── UART TX/RX ── harici genişletme çıkışı (JST/header)
-ESP32-S3 ── kullanılmayan GPIO'lar ── harici header/pad
+ESP32-S3 ── ADC (GPIO3, divider) ── BAT (pil voltajı sense)
+ESP32-S3 ── UART0 TX/RX (GPIO43/44) ── harici genişletme çıkışı (JST/header)
+ESP32-S3 ── kullanılmayan GPIO ── GPIO48 (tek kalan, header/pad)
 ```
 
 ## Güç
@@ -39,7 +40,7 @@ BQ24075'e özgü sabitler (Device Comparison Table): VOVP=6.6V, VBAT(REG)=4.2V (
 |---|---|---|---|
 | 1 | TS | I | **Teyit edildi: PX10303S 2 telli (siyah/kırmızı), NTC yok** → 10kΩ sabit direnç TS→VSS |
 | 2,3 | BAT | I/O | LiPo (+), 4.7-47µF seramik kondansatör BAT→VSS bypass |
-| 4 | CE | I | ESP32-S3 GPIO'suna (aktif-low, charge enable/disable — firmware kontrolü). İçeride ~285kΩ pull-down var, GPIO input/Hi-Z bırakılırsa varsayılan **şarj etkin** olur (güvenli varsayılan). Strapping pini olmayan bir GPIO seçilecek. |
+| 4 | CE | I | **ESP32-S3 GPIO39'a** (aktif-low, charge enable/disable — firmware kontrolü). İçeride ~285kΩ pull-down var, GPIO input/Hi-Z bırakılırsa varsayılan **şarj etkin** olur (güvenli varsayılan). |
 | 5 | EN2 | I | **Önerilen: OUT veya IN'e sabit bağla (logic-high)** → ILIM direnç modu için EN2=1 |
 | 6 | EN1 | I | **Önerilen: VSS'e sabit bağla (GND)** → ILIM direnç modu için EN1=0. Sonuç: max giriş akımı ILIM direnciyle programlanır (Tablo 7-2, EN2=1/EN1=0 satırı), 500mA USB-limit modunda sıkışmayız. |
 | 7 | PGOOD | O | Açık kolektör. **1.5kΩ + LED seri, OUT'tan besleniyor** (adaptör/USB geçerliyken düşük çeker, LED yanar). **Yeşil 0805 LED adayı** (power good) |
@@ -99,52 +100,156 @@ TJ(REG)=125°C (bu noktada IC şarj akımını otomatik kısar), TJ(OFF)=155°C.
 
 ### Diğer güç bileşenleri
 
-- **AP2112K-3.3TRG1:** Ana 3.3V rayı için LDO, 600mA — ESP32-S3, LCD, sensörler ve LED toplam akımı bu limiti aşmamalı (LCD arka ışığı + ESP32-S3 RF peak akımı + WS2812B toplamı kabaca hesaplanmalı, WS2812B tam parlaklıkta ~60mA/LED çekebilir — LED sayısı arttıkça ayrı bir 5V hattından beslenmesi daha güvenli olabilir).
+- **AP2112K-3.3TRG1:** Ana 3.3V rayı için LDO, 600mA — **detaylı güç bütçesi analizi aşağıda, ayrı bölümde.**
 - **USBLC6-2SC6:** USB-C D+/D- hatlarında ESD koruması.
 - **USB-C CC1/CC2:** Sadece USB 2.0 / 5V için pull-down dirençler gerekiyor (genelde 5.1kΩ). Dirençler BOM'da yok ama zorunlu, unutulmamalı.
-- **AO3400A (N-kanal MOSFET, SOT-23-3):** Titreşim motoru için low-side sürücü (MCU GPIO/PWM ile gate sürülecek). 10 adet alınmış, tasarımda 1 tane kullanılacak, gerisi yedek.
+- **AO3400A (N-kanal MOSFET, SOT-23-3):** Low-side sürücü olarak 2 yerde kullanılıyor — titreşim motoru ve LCD backlight (ikisi de MCU GPIO/PWM ile gate sürülüyor). 10 adet alınmış, 2/10 kullanılacak, gerisi yedek.
 - **BZX55C3V6 (3.6V zener, DO-35, THT):** Kullanım amacı net değil — gerilim referansı veya bir koruma hattı olabilir, THT olduğu için PCB'de manuel lehim alanı ayrılmalı. Kullanılmayacaksa BOM'da kalabilir (spare).
+
+### 3.3V Güç Bütçesi — AP2112K-3.3TRG1 (600mA) [ÇALIŞILDI]
+
+**AP2112K-3.3 gerçek datasheet değerleri** (Diodes Inc/BCD Semiconductor AP2112, web araması ile teyit edildi):
+- Dropout @300mA: 125mV tip / 200mV max — Dropout @600mA: 250mV tip / 400mV max
+- Iq: 55µA tip (yük yokken), Standby (EN=low): <1µA
+
+**ESP32-S3 WiFi TX peak akımı: ~500mA** (Espressif'in kendi resmi rakamı — µs-ms mertebesinde, sık tekrarlayan patlamalar).
+
+**Yük tablosu (3.3V raydan besleniyor, ORİJİNAL PLAN):**
+
+| Yük | Yaklaşık akım | Süreklilik |
+|---|---|---|
+| ESP32-S3 (WiFi bağlı, patlama dışı) | ~100mA | Sürekli |
+| ESP32-S3 WiFi TX patlaması | ~500mA (toplam, yukarıdakinin üstüne eklenmez, chip'in o andaki toplam çekişi) | µs-ms, kısa |
+| ILI9341 kontrolcü lojiği (VCC) | ~25mA | Sürekli |
+| ILI9341 backlight (LED pini, tam parlaklık) | ~80-120mA | Sürekli |
+| WS2812B kart üstü x2 (tam beyaz) | ~120mA | Sürekli (statik renkte) |
+| WS2812B harici x4 (tam beyaz) | ~240mA | Sürekli |
+| Touch + ToF + AHT20/BMP280 + MPU6050 + TTP223 x2 + pil sense | ~12mA | Sürekli/düşük |
+
+**Sürekli taban yük (WiFi patlaması hariç, ekran+LED'ler açık): ~600mA** — limitin tam kenarında, WiFi hiç devreye girmeden.
+**WiFi TX patlaması sırasında anlık toplam (100→500mA delta, +400mA): ~1000mA — limitin ~%67 üzerinde. BURADA PATLIYORUZ.**
+
+**Sebep:** WS2812B'ler (özellikle harici 4'lü zincir, 240mA) ve backlight (80-120mA), MAX98357A ve titreşim motorunun aksine (onlar zaten OUT/pil rayından besleniyor), 3.3V rayına bağlı kalmıştı — unutulmuştu.
+
+**Karar/Çözüm (ek parça gerekmiyor, sadece kablolama):**
+
+1. **WS2812B'ler (kart üstü + harici) artık OUT/pil rayından beslenecek** (MAX98357A/motor ile aynı mantık, VCC net değişikliği — GPIO/veri hattı değişmiyor). Elektriksel gerekçe: WS2812B "high" eşiği 0.7×VDD; pil aralığında (3.0-4.2V) bu 2.1-2.94V arası kalır, ESP32'nin 3.3V GPIO çıkışı bunun her zaman üzerinde — seviye kaydırıcı gerekmez. Bu tek değişiklik 360mA'i LDO'dan alır.
+2. **Backlight (LED pini) de OUT/pil rayına taşındı — teyit edildi ve netleşti** (satıcı spec sayfası: "Güç Girişi: 3.3V veya 5V", "Arka Aydınlatma: 4 beyaz LED"). LED, VCC'den (lojik/SPI besleme) ayrı bir pin, tek yönlü bir yük (ESP32'ye sinyal geri göndermiyor) — bu yüzden pil rayına taşınması güvenli. **VCC (lojik) ise kasıtlı olarak 3.3V'ta bırakıldı** — SDO(MISO)/T_DO hatları ESP32'ye geri sinyal gönderdiği için, VCC pil gerilimini görürse bu geri dönen sinyaller ESP32 GPIO'sunun güvenli sınırını aşabilir (modülün seviye kaydırma detayı teyit edilmeden riske atılmadı). Ayrıca **LED pinini direkt GPIO'dan sürme planı düzeltildi** — 80-120mA bir GPIO'nun kaldırabileceğinden fazla, artık AO3400A ile low-side switch olarak sürülüyor (bkz. Ekran bölümü). Bu iki adımla backlight'ın ~100mA'i de 3.3V rayından kalktı.
+3. **Sonuç: yeni sürekli taban ~140mA** (ESP32 ort.~100 + display lojik~25 + sensörler/touch~15), **WiFi patlamasıyla ~540mA** — 600mA limitinin rahat altında, sağlıklı marj.
+4. **Bulk kapasitör eklenmeli:** ESP32-S3'ün VDD3P3 pinlerine yakın **22-47µF** (Espressif'in kendi önerisi) — WiFi'nin µs seviyesindeki akım patlamalarını LDO'nun tepki hızından bağımsız karşılamak için. Bu olmadan WiFi aktifken rastgele reset/brownout riski var (bilinen bir ESP32 arıza modu).
+
+**Bonus — düşük pil eşiğiyle çapraz doğrulama:** Dropout ~125mV @300mA'ten, rayın düzgün 3.3V vermeye devam etmesi için pilin en az **~3.43V** olması gerektiği çıkıyor. Bunun altında ray pilin gerilimini takip ederek düşer — pil BMS kesme noktasına (~3.0V) gelmeden önce. Bu, önceki turlarda konuşulan "~3.4V'ta firmware uyarı/kapanma eşiği" fikrini hem hücre sağlığı hem LDO regülasyon sınırı açısından doğruluyor.
+
+**Aksiyon gerektirmeyen ekstra not:** MAX98357A (yüksek seste ~1-1.5A anlık pik) + WS2812B (artık pilden) + motor + WiFi hepsi tam aynı anda denk gelirse pilden toplam çekiş ~2A'ya yaklaşabilir — küçük 1000mAh hücrenin sınırlarını zorlayabilir (tam deşarj spek'i bilinmiyor). Şimdilik bilgi amaçlı.
 
 ## MCU — ESP32-S3-WROOM-1-N8R2
 
 - 8MB flash, 2MB PSRAM (quad SPI — WROOM-1 varyantı, WROOM-2/octal değil, dolayısıyla PSRAM için ekstra GPIO rezerve edilmiyor, standart GPIO haritası geçerli).
 - **Boot / Reset / Power:** 1x tactile switch Boot (GPIO0, pull-up + PCB'de "boot" ipucu), 1x tactile switch Reset (EN pinine), **1x tactile switch Power (açma/kapama)**.
   - **Power butonu tasarımı:** Datasheet'in SYSOFF ile pil bağlantısını kesme referans devresi (Figure 10-13, "Using BQ24075 to Disconnect the Battery From the System") SYSOFF'u bir **host/MCU** çıkışına bağlıyor, mekanik bir butona değil — donanımsal bir "latch" (kilitleme) devresi olmadan tek bir momentary butonla SYSOFF'u sürmek pratik değil. Bunun yerine **önerilen: SYSOFF sabit GND'de kalır (plandaki gibi), power butonu bir MCU GPIO'suna bağlanır ve firmware ESP32-S3'ü deep sleep'e alıp/uyandırarak "yazılımsal açma/kapama" yapar** (ESP32-S3 deep sleep akımı çok düşük, ~onlarca µA). Gerçek donanımsal sıfır-akım kapatma istenirse SYSOFF tabanlı bir latch devresi (ekstra transistör/diyot) ileride ayrı bir görev olarak eklenebilir, ama bu proje kapsamında gerekli değil.
-- **Kullanılmayan GPIO'lar:** Header veya pad olarak dışarı çıkarılacak — tüm periferik pin ataması netleştikten sonra belirlenecek.
-- **Periferik pin ataması (yapılacak):**
-  - SPI (LCD: MOSI, SCK, MISO[opsiyonel], CS, DC, RESET) — touch kullanılmıyor, T_* pinleri bağlanmayacak
-  - Backlight PWM (LEDC, 1 pin — LCD'nin LED pini)
-  - I2C (ToF sensör + AHT20/BMP280 + boş genişletme header — hepsi aynı bus'ta, adres çakışması yok, bkz. aşağı)
-  - 2x GPIO (ToF: INT + SHUT)
-  - 2x tek hat (WS2812B data — kart üstü LED(ler) ve harici JST çıkışı AYRI GPIO'larda, bkz. LED bölümü)
-  - I2S x3 + 1 GPIO (hoparlör — MAX98357A: BCLK, LRC, DIN + SD [tri-state kontrollü, float=açık/mixed-mono, low=mute]); PWM (titreşim motoru gate sürüşü)
-  - 2x dijital giriş (TTP223 x2 OUT pinleri)
-  - 1x ADC (LDR)
-  - UART (TX/RX, harici genişletme çıkışı — önceki karttan hatırlanıyor, uygun pin varsa eklenecek)
-  - Boot/Reset/Power butonları (Power için deep-sleep wake-capable bir GPIO seçilmeli, örn. EXT0/EXT1; CE strapping olmayan bir GPIO'ya)
+### Pin ataması — kesinleşti (ESP32-S3-WROOM-1-N8R2, Table 2, `datasheets/ESP32-S3-WROOM-1_1U_v0.5.1_Preliminary.pdf`)
+
+**Strapping pinleri (datasheet Section 3.3, Table 3 ile teyit edildi) — sadece 4 tane: GPIO0, GPIO3, GPIO45, GPIO46.** GPIO0 zaten Boot butonu için kullanılıyor (standart/kasıtlı). GPIO45/46'ya **hiçbir şey bağlanmayacak** (boş/NC) — reset anında yanlış seviyede sürülürlerse flash voltajı/boot mesaj davranışı bozulabilir, dokunmamak en güvenlisi.
+
+**GPIO3 istisna — pil voltajı ölçümüne ayrıldı.** Datasheet'in birebir metni: *"GPIO3 is floating by default. When EFUSE_STRAP_JTAG_SEL is set, the strapping value of GPIO3 determines the source of the JTAG signal... When EFUSE_STRAP_JTAG_SEL is 0, the JTAG signal comes from the USB Serial/JTAG controller."* Bu eFuse fabrika/stok modüllerde yakılı değil (biz de yakmayacağız) — yani GPIO3'ün strap değeri varsayılan durumda **tamamen görmezden geliniyor**, JTAG kaynağı zaten sabit olarak USB Serial/JTAG kontrolcüsünden geliyor. Bu da GPIO3'ü, diğer üç strapping pininden farklı olarak, normal bir GPIO/ADC pini gibi güvenle kullanılabilir hale getiriyor.
+
+- **Pil voltajı sense devresi:** BAT hattından (charger'ın BAT pini/pilin + ucu) 100kΩ + 100kΩ dirençli bir voltage divider (2:1 oran) → orta nokta GPIO3'e (ADC1_CH2). VBAT=4.2V'ta ADC ~2.1V okur (güvenli aralıkta). Sürekli çeker ama çok az (~21µA, 1000mAh pil için pratikte ~5+ yıl sürer — pilin kendi self-discharge'inden bile düşük). Bu değerler Adafruit Feather gibi yaygın LiPo+ESP32 kartlarında kullanılan standart yaklaşımla aynı.
+- Bu, önceki "pil düşük gerilimde kendi kendine kapatma" fikrini donanımsal olarak mümkün kılıyor — firmware ADC'den okuyup eşik altına inince graceful shutdown/uyarı tetikleyebilir.
+
+**USB (native, GPIO19=USB_D-, GPIO20=USB_D+) ve UART0 (GPIO43=U0TXD, GPIO44=U0RXD) donanımsal varsayılan pinler — bunlar bizim için hazır ve idealdi:**
+- USB-C D+/D- → USBLC6-2SC6 → GPIO20/GPIO19 (programlama + native USB CDC seri, harici köprü chip gerekmiyor)
+- **Kod yükleme doğrulaması:** Köprü chip (CP2102/CH340) yok, buna gerek de yok — ESP32-S3'ün dahili "USB Serial/JTAG" donanımı esptool ile otomatik bootloader geçişini native USB üzerinden kendi başına yapıyor (DTR/RTS'li transistör devresi gerekmiyor). Bunun çalışması için gereken varsayılan konfigürasyon (eFuse yakılmamış hali) zaten bizim durumumuz — bkz. GPIO3 notundaki aynı doğrulama. Tek şart: USB-C CC1/CC2 pull-down dirençleri (5.1kΩ) olmazsa olmaz, yoksa bazı host'lar (USB-C'den USB-C modern laptoplar gibi) VBUS bile vermeyebilir. Bu yaklaşım Adafruit QT Py ESP32-S3, Seeed XIAO ESP32-S3 gibi köprüsüz native-USB kartlarla aynı, kanıtlanmış bir yöntem.
+- **UART genişletme çıkışı** (kullanıcının hatırladığı "dışarıya UART" isteği) → GPIO43(TX)/GPIO44(RX). Bunlar zaten donanımsal UART0 varsayılanı olduğu için firmware'de pin remap gerekmiyor, hatta ROM bootloader boot mesajlarını da buradan basıyor — debug için bonus.
+
+**Tam atama tablosu:**
+
+| GPIO | Fonksiyon | Not |
+|---|---|---|
+| 0 | BOOT butonu | Strapping — kasıtlı kullanım |
+| 1 | LDR (ADC1) | ADC1 aralığı (GPIO1-10), WiFi aktifken güvenilir |
+| 2 | POWER butonu | RTC-capable (deep sleep EXT0/EXT1 wake) |
+| 3 | Pil voltajı (ADC1_CH2) | Strapping ama **güvenli** — bkz. not aşağıda |
+| 4 | LCD Backlight — AO3400A gate (PWM/LEDC) | Direkt LED pinine değil, MOSFET gate'ine — backlight akımı bir GPIO'nun kaldıramayacağı kadar yüksek (~80-120mA) |
+| 5 | WS2812B — kart üstü data | Ayrı zincir |
+| 6 | WS2812B — harici JST data | Ayrı zincir |
+| 7 | I2S DIN (MAX98357A) | |
+| 8 | I2C0 SDA | ToF + AHT20/BMP280 + MPU6050 (iç/sabit sensör bus'ı) |
+| 9 | I2C0 SCL | " |
+| 10 | LCD CS | FSPICS0 (donanımsal SPI2 pini) |
+| 11 | LCD MOSI (SDI) | FSPID — Touch T_DIN de aynı hatta paralel bağlanacak |
+| 12 | LCD SCK | FSPICLK — Touch T_CLK de aynı hatta paralel bağlanacak |
+| 13 | LCD MISO (SDO) | FSPIQ — **artık zorunlu** (touch eklendiğinde T_DO konum verisini bu hattan okuyor, öncesinde opsiyoneldi) |
+| 14 | LCD DC | |
+| 15 | I2S BCLK (MAX98357A) | |
+| 16 | I2S LRC (MAX98357A) | |
+| 17 | ToF SHUT | |
+| 18 | ToF INT | |
+| 19 | USB_D- | Native USB — bize ayrılmış, başka amaçla kullanılmayacak |
+| 20 | USB_D+ | " |
+| 21 | LCD RESET | |
+| 35 | I2S SD (MAX98357A, tri-state) | Quad PSRAM modülünde serbest (OPI değil) |
+| 36 | Titreşim motoru (AO3400A gate, PWM) | |
+| 37 | TTP223 #1 OUT | |
+| 38 | TTP223 #2 OUT | |
+| 39 | Charger CE | Strapping değil, güvenli |
+| 40 | Touch T_CS | Ekranla aynı SPI hattını paylaşıyor, kendi CS'i |
+| 41 | Touch T_IRQ | Dokunma kesmesi (polling yerine) |
+| 42 | I2C1 SDA | **Harici genişletme bus'ı** (2x JST konnektör, aynı bus'ta paralel) |
+| 43 | UART TX (U0TXD) | Donanımsal varsayılan |
+| 44 | UART RX (U0RXD) | Donanımsal varsayılan |
+| 45 | — (BOŞ, NC) | Strapping (VDD_SPI voltage) |
+| 46 | — (BOŞ, NC) | Strapping (boot mesaj kontrolü) |
+| 47 | I2C1 SCL | **Harici genişletme bus'ı** (yukarıdaki ile eş) |
+| 48 | **BOŞ — genişletme header** | Tek kalan serbest pin |
+| EN | RESET butonu | GPIO değil, ayrı dedike pin |
+
+**Kullanılmayan GPIO genişletme header'ı: sadece GPIO48 kaldı** (touch + ikinci I2C bus eklenince 5 boş pinin 4'ü doldu). Tek pin az geliyorsa ileride LCD MISO/Touch DO paylaşımı gibi bir alandan geri çalınabilir ama şu an gerek yok.
+
+**Not — ISET telemetri artık mümkün değil (kapandı):** GPIO13 (LCD MISO) touch eklenince zorunlu hale geldi, ISET için "boşaltılabilir" yedek pin olma özelliğini kaybetti. ADC1/ADC2 aralıkları tamamen dolu — ISET telemetrisi istenirse ileride başka bir pinden (örn. TTP223 birinden) fedakarlık gerekir. Şimdilik plana dahil değil.
 
 ## Ekran — 2.8" ILI9341 dokunmatik
 
 - SPI arayüz, 240x320. **Pinout modül üzerindeki silkscreen'den teyit edildi** (14 pin toplam): T_IRQ, T_DO, T_DIN, T_CS, T_CLK (touch grubu), SDO(MISO), LED, SCK, SDI(MOSI), DC, RESET, CS, GND, VCC.
-- **Karar: Dokunmatik (touch) kullanılmayacak** — T_IRQ, T_DO, T_DIN, T_CS, T_CLK pinleri **bağlanmayacak** (boşta kalacak). Bu 5 pin daha az kablo/JST derdi demek.
-- **Kullanılacak pinler (9 adet):** VCC, GND, CS, RESET, DC, SDI(MOSI), SCK, SDO(MISO) [opsiyonel — sadece display'den okuma yapılacaksa gerekir, genelde write-only kullanımda boş bırakılabilir ama pin varsa bağlamakta sakınca yok], LED (backlight).
-- **Karar: Arka ışık (backlight) yazılım/PWM ile kontrol edilecek** — LED pini sabit 3.3V'a değil, bir ESP32-S3 GPIO'suna (LEDC/PWM) bağlanacak.
+- **Karar: Dokunmatik (touch) eklendi (XPT2046 tipi, pinout'a dahil edildi — gerekirse sonradan çıkarılabilir, sadece 2 GPIO ve birkaç iz maliyeti).**
+  - T_CLK, T_DIN, T_DO ana ekranın SPI hattıyla (SCK/MOSI/MISO) **paylaşımlı/paralel** bağlanacak — modülün üzerinde bu ikisi ayrı pin olarak çıktığı için mainboard'da aynı nete lehimlenecekler.
+  - T_CS → GPIO40 (touch'a özel chip select), T_IRQ → GPIO41 (dokunma kesmesi, polling yerine kullanılabilir).
+  - Bu paylaşım nedeniyle **MISO (GPIO13) artık zorunlu** (öncesinde touch yokken opsiyoneldi) — touch konum verisi T_DO/MISO hattından okunuyor.
+- **Kullanılacak pinler (toplam 11 adet — 9 ekran + 2 touch-özel):** VCC, GND, CS, RESET, DC, SDI(MOSI), SCK, SDO(MISO) [artık zorunlu], LED (backlight), T_CS, T_IRQ (T_CLK/T_DIN/T_DO ayrı pin harcamıyor, mevcut SPI hattına paralel).
+
+**Güç kaynağı — VCC ve LED ayrı ele alındı (satıcı spec sayfası: "Güç Girişi: 3.3V veya 5V", "Arka Aydınlatma: 4 beyaz LED"):**
+
+- **VCC (lojik/SPI besleme): 3.3V rayında kalıyor, OUT/pil rayına TAŞINMIYOR.** Modül geniş gerilim aralığını kabul etse de, SDO(MISO) ve T_DO hatları ESP32'ye **geri sinyal gönderiyor** (çift yönlü SPI). VCC pil gerilimini (4.2V'a kadar) görürse, bu geri dönen sinyallerin seviyesi VCC'yi takip edip ESP32-S3 GPIO'sunun güvenli giriş sınırını aşabilir — modülün dahili bir seviye kaydırıcısı olup olmadığı (ve varsa MCU tarafını gerçekten 3.3V'a sabitleyip sabitlemediği) teyit edilmeden bunu riske atmamak en doğrusu. Düşük risk/yüksek getiri olmadığı için **muhafazakar seçim: VCC sabit 3.3V.**
+- **LED (backlight): ayrı bir pin, VCC'den bağımsız — OUT/pil rayına taşınabilir (güvenli, tek yönlü bir yük, ESP32'ye sinyal geri göndermiyor).**
+- **Düzeltme — önceki plan hatalıydı:** "LED pini direkt bir GPIO'ya bağlanıp PWM yapılacak" planı **yanlıştı** — 4 LED'lik backlight ~80-120mA çekiyor, bir ESP32-S3 GPIO'su bunu güvenle sağlayamaz (pin başına pratik/mutlak sınır ~20-40mA). **Düzeltilmiş tasarım: titreşim motorundakiyle aynı desen** — bir **AO3400A** (stoktaki 10 adetten biri daha, motorla birlikte 2/10 kullanılmış olur) LED'in dönüş yolunda low-side switch olarak, gate'i GPIO4'ten (LEDC/PWM) sürülüyor, LED'in gerçek gücü OUT/pil rayından geliyor. Flyback diyoda gerek yok (LED endüktif bir yük değil, motorun aksine).
+- Bu düzeltme, güç bütçesindeki ~80-120mA'lik backlight yükünü de 3.3V rayından tamamen kaldırıyor (bkz. Güç bölümü "3.3V Güç Bütçesi").
 - **Konnektör notu:** Modülün üzerinde zaten 2.54mm pitch pin header var (görselde sarı pinler) — bu, sensörler için kullandığımız JST 2.0mm'den **farklı bir standart**. Ekran muhtemelen mainboard üzerinde 2.54mm dişi header/soket ile karşılanacak (JST 2.0mm değil) — ya da düz jumper kablolarla. Bu, ekranın diğer JST'li sensörlerden farklı bir bağlantı şekli olacağı anlamına geliyor, tasarımda ayrıca not edilmeli.
+- **Diğer satıcı bilgileri (referans):** Rezistif dokunmatik (XPT2046 tipiyle uyumlu), aktif alan 43.2x57.6mm, 65K/262K renk derinliği, dahili microSD yuvası (kullanılmayacak, pin bütçesine dahil edilmedi), modül boyutu ~50x86mm.
 
-## Sensör genişletmesi (JST 2.0mm, I2C)
+## Sensör genişletmesi (JST 2.0mm, I2C — 2 AYRI BUS)
 
-- Sensörler direkt lehimlenmeyecek, JST 2.0mm header'lar üzerinden bağlanacak. **Pinout'lar modül görsellerinden teyit edildi — ToF ve AHT20+BMP280 farklı pin sayısına sahip:**
+**Karar: İki bağımsız I2C hattı.** ESP32-S3'ün 2 donanımsal I2C kontrolcüsü (I2C0, I2C1) var, ikisi de aynı anda bağımsız çalışabiliyor. Ayırmanın amacı: harici JST'ye takılan bir şeyde sorun (kısa devre, kötü kablolama, hot-plug) olursa iç sensörlerin bus'ı etkilenmesin.
+
+### I2C0 — iç/sabit sensörler (GPIO8=SDA, GPIO9=SCL)
+
+- Sensörler direkt lehimlenmeyecek, JST 2.0mm header'lar üzerinden bağlanacak. **Pinout'lar modül görsellerinden teyit edildi — ToF ve diğerleri farklı pin sayısına sahip:**
 
 | Sensör | Modül pinleri (kendi sırası) | JST | I2C adresi |
 |---|---|---|---|
 | **VL6180X ToF** (TOF050C) | VIN, GND, SDA, SCL, INT, SHUT | **6-pin JST** (VCC, GND, SDA, SCL, INT, SHUT) | 0x29 |
 | **AHT20+BMP280** | SCL, GND, SDA, VDD | **4-pin JST** (VCC, GND, SDA, SCL) | AHT20: 0x38, BMP280: 0x76/0x77 |
-| Boş/genişletme header | — | 4-pin JST (VCC, GND, SDA, SCL) | — |
+| **MPU6050** (6-eksen ivme/jiroskop, GY-521 tipi) | VCC, GND, SCL, SDA (+ opsiyonel XDA/XCL/AD0/INT, bağlanmayacak) | **4-pin JST** (VCC, GND, SDA, SCL) | 0x68 (AD0 low, varsayılan) |
 
-  - Adres çakışması yok (EEPROM tasarımdan çıkarıldığı için onun adresini düşünmeye gerek kalmadı).
-  - ToF'un **INT** (proximity/range interrupt çıkışı) ve **SHUT** (donanımsal shutdown/reset girişi) pinleri ayrıca 2 MCU GPIO'suna bağlanacak — INT ile polling yerine kesme tabanlı algılama yapılabilir, SHUT ile I2C askıda kalırsa yazılımsal reset atılabilir. Tek ToF sensörü olduğu için adres çakışması amaçlı kullanmaya gerek yok ama bağlamak ucuz bir esneklik.
-  - **Zorunlu: 1x boş/genişletme I2C JST header'ı** (4-pin) — gelecekte ek sensör bağlamak için, kullanıcı tarafından açıkça istendi.
-- Stokta hem 4-pin (20 çift) hem 6-pin (10 çift) JST bol — kısıtlı değiliz.
+  - Adres çakışması yok: 0x29 (ToF), 0x38 (AHT20), 0x76/0x77 (BMP280), 0x68 (MPU6050) — hepsi farklı (EEPROM tasarımdan çıkarıldığı için onun adresini düşünmeye gerek kalmadı).
+  - ToF'un **INT** (proximity/range interrupt çıkışı) ve **SHUT** (donanımsal shutdown/reset girişi) pinleri ayrıca 2 MCU GPIO'suna bağlanacak — INT ile polling yerine kesme tabanlı algılama yapılabilir, SHUT ile I2C askıda kalırsa yazılımsal reset atılabilir.
+
+### I2C1 — harici genişletme bus'ı (GPIO42=SDA, GPIO47=SCL)
+
+- **2x 4-pin JST konnektör (VCC, GND, SDA, SCL), aynı bus'ta paralel** — kartın çıkışında, gelecekte harici I2C cihazı bağlamak için. Kullanıcının "dışarıya mutlaka boş I2C çıkışı" isteği artık kendi bus'ı ve 2 fiziksel konnektörüyle karşılanıyor (eskiden tek bir 4-pin "boş header" olarak I2C0'a ekleniyordu, şimdi ayrı/izole bir bus).
+- Bu bus'a başlangıçta hiçbir şey lehimli değil, tamamen kullanıcı tarafından ileride bağlanacak cihazlara açık.
+- **Kullanım amacı netleşti (bkz. README "Konsept"):** Bu 2 konnektör, ayrıca tasarlanacak **mini I2C gamepad'lerin** bağlantı noktası — "desk buddy + mini oyun konsolu" vizyonunun parçası.
+- **Önemli — bu PCB'yi değil, gamepad tasarımını ilgilendiren bir uyarı:** İki konnektör de aynı bus'ta paralel olduğu için, iki gamepad birbirinin aynıysa (aynı sabit I2C adresi) aynı anda takıldıklarında adres çakışması olur. Gamepad kartlarında bir adres-seçim pini/jumper'ı (ADDR pini gibi) olmalı ki "Player 1" ve "Player 2" farklı adreste konuşabilsin. VCC'nin bu konnektörlerde 3.3V (regüle) olması öneriliyor — gamepad'in kendi lojik/buton devresi için OUT/pil rayının ham gerilimi yerine.
+
+Stokta hem 4-pin (20 çift) hem 6-pin (10 çift) JST bol — kısıtlı değiliz.
 
 ## LDR (ortam ışığı sensörü)
 
@@ -161,6 +266,7 @@ TJ(REG)=125°C (bu noktada IC şarj akımını otomatik kısar), TJ(OFF)=155°C.
 
 - Kart üstünde **1 (mümkünse 2) adet WS2812B** (MCU2812B SMD parça + mevcut şeritten sökülecek 1 adet).
 - **Harici LED çıkışı:** 1x JST 2.0mm (3-pin: VCC, GND, DATA), WS2812B veri hattı — kısa bir seri zincir (~4 LED) için, uzun şerit bağlanmayacak.
+- **Güç kararı (güç bütçesi analizinden, bkz. Güç bölümü):** WS2812B'lerin VCC'si (hem kart üstü hem harici JST) **3.3V rayı değil, OUT/pil rayından (3.0-4.2V)** beslenecek — MAX98357A ve titreşim motoruyla aynı mantık. Veri hattı (GPIO çıkışı) hâlâ 3.3V lojik, değişmiyor; sadece güç neti değişti. Bu değişiklik 3.3V LDO'nun üzerinden ~360mA'lik sürekli yükü kaldırıyor.
 - **Veri hattı topolojisi — karar: kart üstü LED(ler) ve harici çıkış AYRI GPIO'larda, iki bağımsız zincir.**
   - WS2812B'ler tek bir veri hattında zincirlenebiliyor (her LED, aldığı veriyi işleyip gerisini bir sonrakine aktarıyor) — bu yüzden "tek hat mı ayrı GPIO mu" diye bir soru vardı: kart üstü LED'ler + harici JST'deki LED'ler TEK bir zincirde (MCU → onboard LED(ler) → JST → harici LED'ler, tek GPIO) mi olacak, yoksa İKİ ayrı zincirde (biri onboard, biri harici, iki GPIO) mi olacak.
   - **Neden ayrı GPIO önerdim:** ESP32-S3'te GPIO bol, maliyeti yok. Ayrı olursa: (a) harici kabloya bir şey olursa (kopuk/kısa devre) kart üstü gösterge LED'i etkilenmez, (b) firmware'de "durum göstergesi" (onboard) ile "dekoratif aydınlatma" (harici) birbirinden bağımsız kontrol edilir — örn. biri sabit renk gösterirken diğeri animasyon yapabilir. Tek zincir olsaydı bu bağımsızlık kaybolurdu (hepsi aynı veri akışını paylaşır).
@@ -211,6 +317,11 @@ AT24C02 EEPROM, HEF4070BT (quad XOR), LM555 timer ve **LM358AP** artık bu tasar
 - [x] LCD backlight kontrolü: **yazılım/PWM ile kontrol edilecek** (bkz. Ekran bölümü)
 - [x] MAX98357A: **JST 6-pin ile bağlanacak** (VCC/GND/BCLK/LRC/DIN/SD — GAIN modülde NC/float, 15dB varsayılan), SD pini GPIO'ya tri-state kontrollü bağlanacak
 - [ ] Fiziksel hoparlörün empedansının 4Ω veya 8Ω olduğu doğrulanacak (MAX98357A bu aralığı bekliyor)
-- [ ] Harici UART çıkışı (TX/RX) — önceki karttan hatırlanıyor, pin bütçesine eklendi, uygun pin kalıp kalmadığı genel pin atamasında görülecek
-- [ ] CE için hangi ESP32-S3 GPIO'su ayrılacak — genel ESP32-S3 pin atama işine dahil, strapping pini (GPIO0/3/45/46 gibi boot-modu belirleyen pinler) seçilmeyecek
-- [ ] 3.3V rayının toplam akım bütçesi (WS2812B sayısına göre ayrı 5V hattı gerekebilir mi)
+- [x] **ESP32-S3-WROOM-1-N8R2 tam GPIO ataması kesinleşti** — bkz. MCU bölümü "Pin ataması" tablosu (33 pin kullanıldı, sadece GPIO48 boşta kaldı)
+- [x] Pil voltajı ölçümü: **GPIO3'e ayrıldı** (ADC1_CH2) — strapping olmasına rağmen güvenli, datasheet'ten teyitli (eFuse yakılı değilse strap değeri görmezden geliniyor). 100kΩ+100kΩ divider BAT'tan.
+- [x] Harici UART çıkışı → GPIO43(TX)/GPIO44(RX), donanımsal UART0 varsayılanı — UART1 gerekmiyor, tek bus yeterli görüldü
+- [x] CE → GPIO39
+- [x] Touch (XPT2046) eklendi — T_CS=GPIO40, T_IRQ=GPIO41, T_CLK/T_DIN/T_DO ana SPI hattına paralel (MISO artık zorunlu)
+- [x] İki ayrı I2C bus'ı: I2C0 (GPIO8/9, iç sensörler) + I2C1 (GPIO42/47, 2x harici JST, izole)
+- [x] **3.3V güç bütçesi çalışıldı** — WS2812B'ler 3.3V yerine OUT/pil rayına taşındı (360mA tasarruf), ESP32-S3 VDD3P3 yakınına 22-47µF bulk kapasitör eklenmesi kararlaştırıldı. Detay: Güç bölümü "3.3V Güç Bütçesi"
+- [x] Ekranın güç girişi teyit edildi (satıcı spec: "3.3V veya 5V") — **VCC (lojik) yine de 3.3V'ta bırakıldı** (SDO/T_DO geri sinyal riski), **LED (backlight) OUT/pil rayına taşındı**, AO3400A ile MOSFET switch üzerinden — güç bütçesi hedefine (~540mA tavan) ulaşıldı
