@@ -222,7 +222,15 @@ TJ(REG)=125°C (bu noktada IC şarj akımını otomatik kısar), TJ(OFF)=155°C.
 - **LED (backlight): ayrı bir pin, VCC'den bağımsız — OUT/pil rayına taşınabilir (güvenli, tek yönlü bir yük, ESP32'ye sinyal geri göndermiyor).**
 - **Düzeltme — önceki plan hatalıydı:** "LED pini direkt bir GPIO'ya bağlanıp PWM yapılacak" planı **yanlıştı** — 4 LED'lik backlight ~80-120mA çekiyor, bir ESP32-S3 GPIO'su bunu güvenle sağlayamaz (pin başına pratik/mutlak sınır ~20-40mA). **Düzeltilmiş tasarım: titreşim motorundakiyle aynı desen** — bir **AO3400A** (stoktaki 10 adetten biri daha, motorla birlikte 2/10 kullanılmış olur) LED'in dönüş yolunda low-side switch olarak, gate'i GPIO4'ten (LEDC/PWM) sürülüyor, LED'in gerçek gücü OUT/pil rayından geliyor. Flyback diyoda gerek yok (LED endüktif bir yük değil, motorun aksine).
 - Bu düzeltme, güç bütçesindeki ~80-120mA'lik backlight yükünü de 3.3V rayından tamamen kaldırıyor (bkz. Güç bölümü "3.3V Güç Bütçesi").
-- **Konnektör notu:** Modülün üzerinde zaten 2.54mm pitch pin header var (görselde sarı pinler) — bu, sensörler için kullandığımız JST 2.0mm'den **farklı bir standart**. Ekran muhtemelen mainboard üzerinde 2.54mm dişi header/soket ile karşılanacak (JST 2.0mm değil) — ya da düz jumper kablolarla. Bu, ekranın diğer JST'li sensörlerden farklı bir bağlantı şekli olacağı anlamına geliyor, tasarımda ayrıca not edilmeli.
+- **Konnektör kararı (kesinleşti): JST 2.0mm, diğer sensörlerle aynı yöntem.** Modülün kendi 2.54mm pitch header'ı (lehimli pinleri) kullanılmayacak — bunun yerine ekranın arkasındaki pad'lere doğrudan kablo lehimlenip mainboard'daki JST'lere bağlanacak. Yani ekran da diğer 5 modül gibi **kartın dışında**, PCB'de sadece JST footprint'leri var — **ekran sembolü de "Exclude from board" olarak işaretlenecek** (önceki not — "direkt 2.54mm header ile bağlanacağı için footprint gerekir" — bu kararla geçersiz oldu).
+- **11 pin, elimizdeki JST stoğunda 11-pin olmadığı için 2 konnektöre bölündü (4-pin + 7-pin):**
+
+| JST | Pinler | Mantık |
+|---|---|---|
+| **JST-A (4-pin) "LCD Güç"** | VCC, GND, LED, RESET | Güç + açılışta bir kez tetiklenen yavaş sinyal |
+| **JST-B (7-pin) "LCD SPI+Touch"** | CS, DC, MOSI, SCK, MISO, T_CS, T_IRQ | Gerçek SPI veri/saat hattı + touch'ın kendi CS/IRQ'su, tek grupta temiz tutuldu |
+
+  Stok: 4-pin bol (20 çift), 7-pin'den 1 tanesi bu iş için ayrılıyor (5 çiftten). Tek GND (JST-A'da) her iki konnektöre de yetiyor — kısa kablo mesafesinde ayrı toprak dönüşüne gerek görülmedi.
 - **Diğer satıcı bilgileri (referans):** Rezistif dokunmatik (XPT2046 tipiyle uyumlu), aktif alan 43.2x57.6mm, 65K/262K renk derinliği, dahili microSD yuvası (kullanılmayacak, pin bütçesine dahil edilmedi), modül boyutu ~50x86mm.
 
 ## Sensör genişletmesi (JST 2.0mm, I2C — 2 AYRI BUS)

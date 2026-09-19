@@ -27,7 +27,7 @@ Bu liste, sipariş/tedarik görselleri ve kullanıcı teyidiyle oluşturuldu. Di
 
 | Komponent | Ürün Kodu | Paket | Adet | Elimde mi? | Not |
 |---|---|---|---|---|---|
-| 2.8" ILI9341 dokunmatik LCD | — | SPI modül, 240x320 | 1 | ✅ | Rezistif dokunmatik + SPI, güç girişi 3.3V/5V (satıcı spec teyitli), VCC 3.3V rayında, LED (backlight) OUT/pil rayında (AO3400A ile) |
+| 2.8" ILI9341 dokunmatik LCD | — | SPI modül, 240x320 | 1 | ✅ | Rezistif dokunmatik + SPI, güç girişi 3.3V/5V (satıcı spec teyitli), VCC 3.3V rayında, LED (backlight) OUT/pil rayında (AO3400A ile). Modülün kendi header'ı kullanılmıyor — pad'lere kablo lehimlenip 2x JST (4-pin+7-pin) ile bağlanacak, diğer sensörler gibi kart dışı |
 
 ## Sensörler
 
