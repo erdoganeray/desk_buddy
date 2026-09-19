@@ -2,9 +2,423 @@
 	(version 20260306)
 	(generator "eeschema")
 	(generator_version "10.0")
-	(uuid 4c3424ea-09dd-4711-ada7-066e929b32cd)
+	(uuid "4c3424ea-09dd-4711-ada7-066e929b32cd")
 	(paper "A4")
 	(lib_symbols)
+	(sheet
+		(at 54.61 96.52)
+		(size 12.7 3.81)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "012d4989-7110-4f9f-9a37-6f68173abcce")
+		(property "Sheetname" "07_Motor"
+			(at 54.61 95.8084 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "07_Motor.kicad_sch"
+			(at 54.61 100.9146 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "Desk Buddy"
+				(path "/4c3424ea-09dd-4711-ada7-066e929b32cd"
+					(page "9")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 54.61 43.18)
+		(size 12.7 3.81)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "431db67b-3d56-4cdc-b27f-44a0ba15f32a")
+		(property "Sheetname" "01_MCU"
+			(at 54.61 42.4684 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "01_MCU.kicad_sch"
+			(at 54.61 47.5746 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "Desk Buddy"
+				(path "/4c3424ea-09dd-4711-ada7-066e929b32cd"
+					(page "3")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 54.61 69.85)
+		(size 12.7 3.81)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "458bc477-c112-44a6-bbe2-35f6c9978780")
+		(property "Sheetname" "04_Sensors_I2C1_Expansion"
+			(at 54.61 69.1384 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "04_Sensors_I2C1_Expansion.kicad_sch"
+			(at 54.61 74.2446 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "Desk Buddy"
+				(path "/4c3424ea-09dd-4711-ada7-066e929b32cd"
+					(page "6")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 54.61 87.63)
+		(size 12.7 3.81)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "635bd524-a633-40e0-a1ad-f2c1bddbd053")
+		(property "Sheetname" "06_Audio"
+			(at 54.61 86.9184 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "06_Audio.kicad_sch"
+			(at 54.61 92.0246 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "Desk Buddy"
+				(path "/4c3424ea-09dd-4711-ada7-066e929b32cd"
+					(page "8")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 54.61 34.29)
+		(size 12.7 3.81)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "73c640ec-075d-47bc-a58c-af40368eefc2")
+		(property "Sheetname" "00_Power"
+			(at 54.61 33.5784 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "00_Power.kicad_sch"
+			(at 54.61 38.6846 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "Desk Buddy"
+				(path "/4c3424ea-09dd-4711-ada7-066e929b32cd"
+					(page "2")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 54.61 105.41)
+		(size 12.7 3.81)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "c460b8ba-cd2a-468f-98d5-68ece31ea07b")
+		(property "Sheetname" "08_Misc_IO"
+			(at 54.61 104.6984 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "08_Misc_IO.kicad_sch"
+			(at 54.61 109.8046 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "Desk Buddy"
+				(path "/4c3424ea-09dd-4711-ada7-066e929b32cd"
+					(page "10")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 54.61 78.74)
+		(size 12.7 3.81)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "d4f559d2-aec3-4b39-a9c1-9b041542c1f1")
+		(property "Sheetname" "05_LED"
+			(at 54.61 78.0284 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "05_LED.kicad_sch"
+			(at 54.61 83.1346 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "Desk Buddy"
+				(path "/4c3424ea-09dd-4711-ada7-066e929b32cd"
+					(page "7")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 54.61 52.07)
+		(size 12.7 3.81)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "fac1e063-c27a-4f25-9a55-28f0a7bc4920")
+		(property "Sheetname" "02_Display"
+			(at 54.61 51.3584 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "02_Display.kicad_sch"
+			(at 54.61 56.4646 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "Desk Buddy"
+				(path "/4c3424ea-09dd-4711-ada7-066e929b32cd"
+					(page "4")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 54.61 60.96)
+		(size 12.7 3.81)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0)
+		)
+		(uuid "fe80c151-2d7e-4351-b0ff-007bbe5a52ac")
+		(property "Sheetname" "03_Sensors_I2C0"
+			(at 54.61 60.2484 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "03_Sensors_I2C0.kicad_sch"
+			(at 54.61 65.3546 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "Desk Buddy"
+				(path "/4c3424ea-09dd-4711-ada7-066e929b32cd"
+					(page "5")
+				)
+			)
+		)
+	)
 	(sheet_instances
 		(path "/"
 			(page "1")
