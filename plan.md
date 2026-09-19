@@ -3,7 +3,7 @@
 ## 0. Proje kurulumu
 - [x] Dosya yapısı oluşturuldu (README, BOM, şematik notları, plan)
 - [x] Git init
-- [ ] KiCad projesi `kicad/` klasöründe oluşturulacak (KiCad üzerinden)
+- [x] KiCad projesi `kicad/` klasöründe oluşturuldu ("Desk Buddy" proje adıyla)
 
 ## 1. BOM netleştirme
 - [x] MPN'ler teyit edildi: ESP32-S3-WROOM-1-N8R2, BQ24075RGTR, AO3400A, USB4110-GF-A
@@ -41,7 +41,7 @@
 - [x] Ekranın güç spek'i teyit edildi (satıcı sayfası: 3.3V/5V) — VCC (lojik) yine de 3.3V'ta bırakıldı (SDO/T_DO geri sinyal riski), backlight (LED pini) OUT/pil rayına taşındı, **AO3400A ile MOSFET switch üzerinden** (direkt GPIO'dan sürme planı akım limiti nedeniyle düzeltildi) — taban ~140mA'e indi, WiFi patlamasıyla ~540mA
 
 ## 4. Şematik (KiCad)
-- [ ] KiCad projesi oluştur (`kicad/`)
+- [x] KiCad projesi oluştur (`kicad/`)
 - [ ] Eksik sembol/footprint'leri hazırla (BQ24075RGTR, TOF050C, AHT20+BMP280, ILI9341 modül, MAX98357A, USB4110-GF-A, JST 2.0mm serisi, WS2812B, TTP223)
 - [ ] Güç bloğunu çiz (charger + LDO)
 - [ ] MCU + boot/reset/power bloğunu çiz
