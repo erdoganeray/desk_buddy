@@ -44,19 +44,18 @@
 ## 4. Şematik (KiCad)
 - [x] KiCad projesi oluştur (`kicad/`)
 - [x] 5 kart-dışı modül sembolü çizildi: TOF050C, AHT20+BMP280, MPU6050, MAX98357A, TTP223 (hepsi Exclude from board, proje kütüphanesi `kicad/libraries/DeskBuddy.kicad_sym`)
-- [ ] ILI9341 modül sembolünü çiz (11 pin, artık bu da Exclude from board — 2.54mm header footprint'ine gerek kalmadı)
-- [ ] Kalan sembol/footprint'leri hazırla (BQ24075RGTR footprint doğrulaması, USB4110-GF-A, JST 2.0mm serisi, WS2812B)
-- [ ] Güç bloğunu çiz (charger + LDO)
-- [ ] MCU + boot/reset/power bloğunu çiz
-- [ ] Ekran bloğunu çiz (+ backlight AO3400A switch (pil rayından) + XPT2046 touch, paylaşımlı SPI, VCC 3.3V'ta)
-- [ ] LED bloğunu çiz (kart üstü + harici çıkış, 2 ayrı GPIO + charger CHG/PGOOD LED'leri)
-- [ ] Ses bloğunu çiz (MAX98357A JST, I2S)
-- [ ] Titreşim motoru bloğunu çiz (AO3400A + flyback diyot)
-- [ ] Sensör genişletme bloğunu çiz — I2C0 (ToF + AHT20/BMP280 + MPU6050) ve I2C1 (2x harici JST) ayrı ayrı
-- [ ] LDR + TTP223 x2 bloklarını çiz (JST)
-- [ ] UART genişletme çıkışını çiz
-- [ ] Kullanılmayan GPIO breakout'unu çiz
-- [ ] ERC çalıştır, hataları temizle
+- [x] ILI9341 modül sembolü çizildi (2-unit: Güç 4-pin + SPI/Touch 7-pin, Exclude from board, 2 ayrı JST — 2.54mm header planı iptal)
+- [x] Kalan sembol/footprint'leri hazırla — BQ24075RGT, AP2112K-3.3, USBLC6-2SC6, AO3400A, WS2812B, USB4110-GF-A, ESP32-S3-WROOM-1 hepsi bundled kütüphanelerde bulundu/doğrulandı (bkz. Faz 3 doğrulama notları); JST serisi tüm pin sayıları (2/3/4/6/7) bundled `Connector_JST` kütüphanesinde mevcut
+- [x] Güç bloğunu çiz (00_Power: charger + LDO + USB-C + pil + status LED'ler + PWR_FLAG'ler)
+- [x] MCU + boot/reset/power bloğunu çiz (01_MCU: ESP32-S3 + 3 buton devresi + tüm GPIO label'ları + GPIO48 header)
+- [x] Ekran bloğunu çiz (02_Display: LCD 2-unit + JST-A/JST-B + backlight AO3400A switch)
+- [x] LED bloğunu çiz (05_LED: kart üstü 2x WS2812B zincir + harici JST çıkış, charger CHG/PGOOD LED'leri 00_Power'da)
+- [x] Ses bloğunu çiz (06_Audio: MAX98357A + 6-pin JST)
+- [x] Titreşim motoru bloğunu çiz (07_Motor: AO3400A + BAT54 flyback diyot)
+- [x] Sensör genişletme bloğunu çiz (03_Sensors_I2C0: ToF+AHT20/BMP280+MPU6050; 04_Sensors_I2C1_Expansion: 2x harici JST)
+- [x] LDR + TTP223 x2 + UART çıkışı çizildi (08_Misc_IO)
+- [x] Kullanılmayan GPIO breakout'u (GPIO48, 3-pin header: 3V3/GND/DATA) 01_MCU'da
+- [x] **ERC çalıştırıldı, tüm proje temiz: 0 hata, 0 uyarı** (kicad-cli ile her sayfa sonrası doğrulandı, sonunda tam proje taraması yapıldı)
 
 ## 5. PCB layout
 - [ ] Board outline + M3 montaj deliği
