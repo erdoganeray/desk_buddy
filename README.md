@@ -45,4 +45,6 @@ Detaylar ve açık sorular için [schematic-notes.md](schematic-notes.md) dosyas
 
 ## Durum
 
-BOM netleşti, charger (BQ24075) tamamen datasheet'ten hesaplandı, ESP32-S3'ün tam GPIO ataması ve 3.3V güç bütçesi çalışıldı — donanım tasarımı KiCad'e aktarılmaya hazır. KiCad'de fiili şematik çizimi henüz başlamadı. Güncel açık maddeler için `plan.md` ve `schematic-notes.md`'deki işaretlenmemiş kutucuklara bakın.
+BOM netleşti, charger (BQ24075) tamamen datasheet'ten hesaplandı, ESP32-S3'ün tam GPIO ataması ve 3.3V güç bütçesi çalışıldı. **KiCad şematiği tamamlandı:** 9 sayfalık hiyerarşik şematik (`00_Power` … `08_Misc_IO`) çizildi ve tüm projede ERC temiz (0 hata, 0 uyarı).
+
+Sıradaki aşama **PCB layout**: footprint atamaları, board outline + M3 deliği, komponent yerleşimi ve routing. `kicad/Desk Buddy.kicad_pcb` şu an boş. Güncel açık maddeler için `plan.md` ve `schematic-notes.md`'deki işaretlenmemiş kutucuklara bakın.

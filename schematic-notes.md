@@ -51,7 +51,7 @@ BQ24075'e özgü sabitler (Device Comparison Table): VOVP=6.6V, VBAT(REG)=4.2V (
 | 13 | IN | I | USB-C VBUS, 1µF bypass IN→VSS. Giriş aralığı 4.35-6.6V (BQ24075/79) |
 | 14 | TMR | I | **Boşta bırakılacak** (unconnected = varsayılan pre-charge/fast-charge zamanlayıcı süreleri) — ekstra direnç gerekmiyor |
 | 15 | SYSOFF | I | **VSS'e sabit bağla (GND)** = normal çalışma (datasheet 10.2.2.1.2 ile teyitli). Yüksek çekilirse batarya-sistem FET'i kapanır. İçeride VBAT'a ~5MΩ ile pull-up var, boşta bırakılmamalı. |
-| 16 | ISET | I/O | **RISET = 1.13kΩ** (→ ICHG ≈ 800mA / 0.8C, TI'nin kendi worked example değeri, hesap aşağıda). **Boşta bırakılırsa şarj tamamen devre dışı kalır.** %1 tolerans şart. Şarj sırasında bu pindeki gerilim akımla orantılı — isteğe bağlı ESP32 ADC pinine bağlanıp telemetri olarak okunabilir. |
+| 16 | ISET | I/O | **RISET = 1.78kΩ** (→ ICHG ≈ 500mA / 0.5C, varsayılan; şematikte R7). 800mA istenirse 1.13kΩ (TI'nin kendi worked example değeri) opsiyonel — hesap aşağıda. **Boşta bırakılırsa şarj tamamen devre dışı kalır.** %1 tolerans şart. Şarj sırasında bu pindeki gerilim akımla orantılı — isteğe bağlı ESP32 ADC pinine bağlanıp telemetri olarak okunabilir. |
 | — | ITERM, TD | — | BQ24075/79'da yok (sadece '74/'72,'73'te var) — bu pinler için hiçbir şey yapılmayacak |
 | Thermal pad | — | — | VSS'e lehimlenecek (asıl toprak yolu olarak kullanılmayacak, VSS pini ayrıca mutlaka topraklanacak) |
 
@@ -104,7 +104,6 @@ TJ(REG)=125°C (bu noktada IC şarj akımını otomatik kısar), TJ(OFF)=155°C.
 - **USBLC6-2SC6:** USB-C D+/D- hatlarında ESD koruması.
 - **USB-C CC1/CC2:** Sadece USB 2.0 / 5V için pull-down dirençler gerekiyor (genelde 5.1kΩ). Dirençler BOM'da yok ama zorunlu, unutulmamalı.
 - **AO3400A (N-kanal MOSFET, SOT-23-3):** Low-side sürücü olarak 2 yerde kullanılıyor — titreşim motoru ve LCD backlight (ikisi de MCU GPIO/PWM ile gate sürülüyor). 10 adet alınmış, 2/10 kullanılacak, gerisi yedek.
-- **BZX55C3V6 (3.6V zener, DO-35, THT):** Kullanım amacı net değil — gerilim referansı veya bir koruma hattı olabilir, THT olduğu için PCB'de manuel lehim alanı ayrılmalı. Kullanılmayacaksa BOM'da kalabilir (spare).
 
 ### 3.3V Güç Bütçesi — AP2112K-3.3TRG1 (600mA) [ÇALIŞILDI]
 
@@ -245,7 +244,7 @@ TJ(REG)=125°C (bu noktada IC şarj akımını otomatik kısar), TJ(OFF)=155°C.
 |---|---|---|---|
 | **VL6180X ToF** (TOF050C) | VIN, GND, SDA, SCL, INT, SHUT | **6-pin JST** (VCC, GND, SDA, SCL, INT, SHUT) | 0x29 |
 | **AHT20+BMP280** | SCL, GND, SDA, VDD | **4-pin JST** (VCC, GND, SDA, SCL) | AHT20: 0x38, BMP280: 0x76/0x77 |
-| **MPU6050** (6-eksen ivme/jiroskop, GY-521 tipi) | VCC, GND, SCL, SDA (+ opsiyonel XDA/XCL/AD0/INT, bağlanmayacak) | **4-pin JST** (VCC, GND, SDA, SCL) | 0x68 (AD0 low, varsayılan) |
+| **MPU6050** (6-eksen ivme/jiroskop, GY-521 tipi) | VCC, GND, SCL, SDA (+ opsiyonel XDA/XCL/AD0/INT, bağlanmayacak) | **4-pin JST** (VCC, GND, SDA, SCL) — modül PCB üzerinde değil, JST ile bağlanıyor; şematikte sadece JST (J8) var, modül sembolü yerleştirilmedi | 0x68 (AD0 low, varsayılan) |
 
   - Adres çakışması yok: 0x29 (ToF), 0x38 (AHT20), 0x76/0x77 (BMP280), 0x68 (MPU6050) — hepsi farklı (EEPROM tasarımdan çıkarıldığı için onun adresini düşünmeye gerek kalmadı).
   - ToF'un **INT** (proximity/range interrupt çıkışı) ve **SHUT** (donanımsal shutdown/reset girişi) pinleri ayrıca 2 MCU GPIO'suna bağlanacak — INT ile polling yerine kesme tabanlı algılama yapılabilir, SHUT ile I2C askıda kalırsa yazılımsal reset atılabilir.

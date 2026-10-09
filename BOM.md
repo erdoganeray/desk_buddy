@@ -2,9 +2,8 @@
 
 Bu liste, sipariş/tedarik görselleri ve kullanıcı teyidiyle oluşturuldu. Dirençler ve kondansatörler kapsam dışı bırakıldı (ihtiyaca göre seçilecek) — **istisna:** USB-C CC1/CC2 pull-down'ları ve charger ISET direnci gibi tasarımı doğrudan etkileyen değerler `schematic-notes.md`'de ayrıca not edildi.
 
-**Durum:** Çoğu parçanın MPN'i ve sahiplik durumu teyit edildi. Kalan açık noktalar:
+**Durum:** Çoğu parçanın MPN'i ve sahiplik durumu teyit edildi. Kalan açık nokta:
 - Tactile switch ve M3 vida için sahiplik teyidi henüz yapılmadı (muhtemelen elde, ama işaretlenmedi).
-- LiPo pil kapasitesi (mAh) henüz not edilmedi — charger ISET direnç hesabı için gerekli.
 
 ## MCU / Bağlantı
 
@@ -16,12 +15,11 @@ Bu liste, sipariş/tedarik görselleri ve kullanıcı teyidiyle oluşturuldu. Di
 
 | Komponent | Ürün Kodu | Paket | Adet | Elimde mi? | Not |
 |---|---|---|---|---|---|
-| LiPo pil | Power-Xtra PX10303S, 3.7V 1000mAh | Pouch | 1 | ✅ | 2 telli mi 3 telli (NTC) mi ve dahili koruma (PCM) olup olmadığı teyit edilecek |
+| LiPo pil | Power-Xtra PX10303S, 3.7V 1000mAh | Pouch | 1 | ✅ | 2 telli (siyah/kırmızı), NTC yok. Dahili koruma (BMS/PCM) var — teyit edildi |
 | Li-Ion Charger IC | **BQ24075RGTR** (TI) | VQFN-16 (3x3) | 1 | ✅ | DPPM (dynamic power path management) destekli — USB varken sistem USB'den beslenir + pil şarj olur, USB çıkınca kesintisiz pile geçer. Pin planı: `schematic-notes.md` |
 | AP2112K-3.3TRG1 | AP2112K-3.3TRG1 | SOT25 | 10 | ✅ | 3.3V LDO regülatör, 600mA |
 | USBLC6-2SC6 | USBLC6-2SC6 | SOT23-6 | 10 | ✅ | USB D+/D- için TVS/ESD koruma diyot dizisi |
 | N-Kanal MOSFET | **AO3400A** | SOT-23-3 | 10 | ✅ | Titreşim motoru + LCD backlight sürücüsü (2x low-side switch) |
-| BZX55C3V6_AY_10001 | BZX55C3V6 | DO-35 (THT) | 12 | ✅ | 3.6V zener diyot |
 
 ## Ekran
 
@@ -37,7 +35,7 @@ Bu liste, sipariş/tedarik görselleri ve kullanıcı teyidiyle oluşturuldu. Di
 | AHT20+BMP280 sıcaklık/nem/basınç modülü | — | Modül | 1 | ✅ | Pinout: VDD,SDA,GND,SCL — 4-pin JST ile bağlanacak |
 | 5mm LDR (foto direnç) | — | THT, 5mm | ? | ✅ | Muhtemelen board üstü (voltage divider + ADC), ortam ışığına göre parlaklık ayarı adayı |
 | TTP223 kapasitif dokunmatik sensör | TTP223 | Modül/SOT23-6 | 2 | ✅ | Üründe 2 adet kullanılacak şekilde planlanmıştı — dokunma etkileşimi (örn. "okşama" algısı) |
-| MPU6050 6-eksen ivme/jiroskop modülü | MPU6050 | Modül (GY-521 tipi) | 1 | ✅ | I2C, adres 0x68 (AD0 low) — 4-pin JST ile bağlanacak, sonradan hatırlandı |
+| MPU6050 6-eksen ivme/jiroskop modülü | MPU6050 | Modül (GY-521 tipi) | 1 | ✅ | I2C, adres 0x68 (AD0 low) — PCB üzerinde değil, 4-pin JST ile bağlanacak (şematikte sadece JST var, modül sembolü yerleştirilmedi), sonradan hatırlandı |
 
 ## Ses
 
