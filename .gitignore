@@ -21,3 +21,6 @@ Thumbs.db
 # Editor
 .vscode/
 .history/
+
+# KiCad F8 (Update PCB from Schematic) raporu
+kicad/report.txt
