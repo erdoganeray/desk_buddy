@@ -28,7 +28,7 @@ Bu tasarım daha önce bir kez tamamlanmış, komponentler/entegreler satın al�
 - **Titreşim motoru:** 3V şaftsız mini motor, JST 2.0mm çıkışı, AO3400A MOSFET ile sürülecek
 - **Güç:** LiPo pil + BQ24075RGTR Li-Ion şarj IC (DPPM — USB varken sistem çalışır + pil şarj olur, USB çıkınca kesintisiz pile geçer) + AP2112K-3.3 LDO
 - **USB-C:** USB4110-GF-A konnektör — şarj ve programlama/seri haberleşme için
-- **Butonlar:** 1x Reset, 1x Boot, 1x Power (açma/kapama — firmware deep-sleep ile)
+- **Butonlar:** 1x Reset, 1x Boot, 1x Power (açma/kapama — firmware deep-sleep ile). Power butonunun GPIO2'si ayrıca 3 pinli JST'ye (3V3, GND, GPIO2; J18) çıkarıldı: buton harici anahtara taşınabilir ya da GPIO2 başka bir iş için kullanılabilir
 - **Genişletme:** MCU'nun kullanılmayan tek pini (GPIO48) harici pad/header'a çıkarılacak, ayrıca harici bir UART çıkışı (GPIO43/44, donanımsal varsayılan) da olacak (önceki tasarımda vardı)
 - **Mekanik:** M3 vida deliği
 

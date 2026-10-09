@@ -56,6 +56,7 @@
 - [x] Sensör genişletme bloğunu çiz (03_Sensors_I2C0: ToF+AHT20/BMP280+MPU6050; 04_Sensors_I2C1_Expansion: 2x harici JST)
 - [x] LDR + TTP223 x2 + UART çıkışı çizildi (08_Misc_IO)
 - [x] Kullanılmayan GPIO breakout'u (GPIO48, 3-pin header: 3V3/GND/DATA) 01_MCU'da
+- [x] Power butonunun yanına 3 pinli JST eklendi (J18 `PWR_BTN`: 3V3/GND/GPIO2) — buton harici anahtara taşınabilir ya da GPIO2 başka işte kullanılabilir (layout sırasında eklendi)
 - [x] **ERC çalıştırıldı, tüm proje temiz: 0 hata, 0 uyarı** (kicad-cli ile her sayfa sonrası doğrulandı, sonunda tam proje taraması yapıldı)
 
 ## 5. PCB layout

@@ -4763,4 +4763,253 @@
 			)
 		)
 	)
+		(symbol
+		(lib_id "Connector_Generic:Conn_01x03")
+		(at 87.63 111.76 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "f9256d01-1701-4f06-bc94-bb0086c0e3fa")
+		(property "Reference" "J18"
+			(at 89.154 110.49 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "PWR_BTN"
+			(at 89.154 113.03 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Connector_JST:JST_PH_B3B-PH-K_1x03_P2.00mm_Vertical"
+			(at 87.63 111.76 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 87.63 111.76 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Generic connector, single row, 01x03, script generated (kicad-library-utils/schlib/autogen/connector/)"
+			(at 87.63 111.76 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "3"
+			(uuid "786a67a2-7384-434e-94ee-ce33e89a96c3")
+		)
+		(pin "2"
+			(uuid "cc0331f7-6d04-4112-b742-9ad20105958a")
+		)
+		(pin "1"
+			(uuid "be9123d5-8089-4eb5-ada5-45feeea11f81")
+		)
+		(instances
+			(project "Desk Buddy"
+				(path "/4c3424ea-09dd-4711-ada7-066e929b32cd/431db67b-3d56-4cdc-b27f-44a0ba15f32a"
+					(reference "J18")
+					(unit 1)
+				)
+			)
+		)
+	)
+		(symbol
+		(lib_id "power:+3V3")
+		(at 82.55 109.22 90)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "277ef9a5-89b6-4ff9-8a9b-ae8389e32ff6")
+		(property "Reference" "#PWR060"
+			(at 86.36 109.22 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "+3V3"
+			(at 80.01 109.22 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" ""
+			(at 82.55 109.22 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 82.55 109.22 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"+3V3\""
+			(at 82.55 109.22 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "44b60261-40ff-45a1-9f95-7c94c9939f25")
+		)
+		(instances
+			(project "Desk Buddy"
+				(path "/4c3424ea-09dd-4711-ada7-066e929b32cd/431db67b-3d56-4cdc-b27f-44a0ba15f32a"
+					(reference "#PWR060")
+					(unit 1)
+				)
+			)
+		)
+	)
+		(symbol
+		(lib_id "power:GND")
+		(at 82.55 111.76 270)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "27cbeb9a-00f5-4227-9cc4-4949e1c4742f")
+		(property "Reference" "#PWR061"
+			(at 76.2 111.76 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "GND"
+			(at 77.978 111.76 90)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 82.55 111.76 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 82.55 111.76 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 82.55 111.76 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "12f4023d-8e68-4cd4-88c2-b92d83a7922c")
+		)
+		(instances
+			(project "Desk Buddy"
+				(path "/4c3424ea-09dd-4711-ada7-066e929b32cd/431db67b-3d56-4cdc-b27f-44a0ba15f32a"
+					(reference "#PWR061")
+					(unit 1)
+				)
+			)
+		)
+	)
+		(label "ESP32_POWER"
+		(at 82.55 114.3 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right bottom)
+		)
+		(uuid "1f2f7f7e-d27d-4bad-9a6f-3142b5260a89")
+	)
 )
