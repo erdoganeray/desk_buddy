@@ -2,8 +2,9 @@
 
 Bu liste, sipariş/tedarik görselleri ve kullanıcı teyidiyle oluşturuldu. Dirençler ve kondansatörler kapsam dışı bırakıldı (ihtiyaca göre seçilecek) — **istisna:** USB-C CC1/CC2 pull-down'ları ve charger ISET direnci gibi tasarımı doğrudan etkileyen değerler `schematic-notes.md`'de ayrıca not edildi.
 
-**Durum:** Çoğu parçanın MPN'i ve sahiplik durumu teyit edildi. Kalan açık nokta:
-- Tactile switch ve M3 vida için sahiplik teyidi henüz yapılmadı (muhtemelen elde, ama işaretlenmedi).
+**Durum:** Çoğu parçanın MPN'i ve sahiplik durumu teyit edildi. Kalan açık noktalar:
+- Tactile switch elde yok, PTS645SM43SMTR92 LFS satın alınacak.
+- M3 vida için sahiplik teyidi henüz yapılmadı (muhtemelen elde, ama işaretlenmedi).
 
 ## MCU / Bağlantı
 
@@ -75,7 +76,7 @@ Bu liste, sipariş/tedarik görselleri ve kullanıcı teyidiyle oluşturuldu. Di
 
 | Komponent | Ürün Kodu | Paket | Adet | Elimde mi? | Not |
 |---|---|---|---|---|---|
-| Tactile Switch SPST-NO, top actuated | — | SMD | 10 | ☐ | 3 tanesi Reset + Boot + Power (açma/kapama) için kullanılacak, sahiplik teyidi bekliyor |
+| Tactile Switch SPST-NO, top actuated | **PTS645SM43SMTR92 LFS** (C&K) | SMD, 6x6mm, H4.3mm | 3 (+yedek) | ☐ | Elde yok, e-komponent'ten satın alınacak (~24.88 TL/adet). Reset + Boot + Power (açma/kapama) için 3 adet. KiCad footprint: `SW_SPST_PTS645Sx43SMTR92` (datasheet: ckswitches.com/media/1471/pts645.pdf) |
 
 ## Mekanik
 
@@ -103,5 +104,5 @@ Bu üçü orijinal tasarımda vardı ama şu an elimizde değil — arkadaşa ve
   - Bypass kondansatörleri: IN→VSS **1µF**, BAT→VSS **4.7µF**, OUT→VSS **4.7µF** (seramik)
   - LDR voltage divider direnci
   - Pil voltajı sense divider: 100kΩ + 100kΩ (BAT → GPIO3/ADC1_CH2)
-  - ESP32-S3 VDD3P3 bulk kapasitörü: 22-47µF (WiFi TX akım patlamaları için, Espressif önerisi)
-  - Titreşim motoru için flyback diyot (küçük Schottky, örn. BAT54) — BOM'da yok, ayrıca temin edilecek
+  - ESP32-S3 VDD3P3 bulk kapasitörü: **47µF, 10V X5R, 1206** (WiFi TX akım patlamaları için, Espressif önerisi 22-47µF) — elde yok, satın alınacak (`purchase-list.md`)
+  - Titreşim motoru için flyback diyot: **SS14** (Schottky, 1A 40V, SMA/DO-214AC) — elde yok, satın alınacak (`purchase-list.md`)

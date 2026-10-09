@@ -2669,7 +2669,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
 			(at 40.64 62.23 0)
 			(hide yes)
 			(show_name no)
@@ -2827,7 +2827,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Package_TO_SOT_SMD:SOT-23"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
 			(at 40.64 55.88 0)
 			(hide yes)
 			(show_name no)

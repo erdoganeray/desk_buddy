@@ -9,7 +9,8 @@
 - [x] MPN'ler teyit edildi: ESP32-S3-WROOM-1-N8R2, BQ24075RGTR, AO3400A, USB4110-GF-A
 - [x] Arkadaşta kalan/gereksiz kalan parçalar belirlendi: AT24C02 EEPROM, HEF4070BT XOR gate, LM555 timer, LM358AP — tasarımdan çıkarıldı
 - [x] Yeni sensörler BOM'a eklendi: LDR, AHT20+BMP280, TTP223 x2, mini titreşim motoru, MPU6050 (sonradan hatırlandı)
-- [ ] Tactile switch ve M3 vida için sahiplik/adet teyidi
+- [ ] Tactile switch: elde yok, PTS645SM43SMTR92 LFS (3 adet + yedek) satın alınacak
+- [ ] M3 vida için sahiplik/adet teyidi
 - [x] LiPo pil belirlendi: Power-Xtra PX10303S, 3.7V 1000mAh
 
 ## 2. Araştırma
@@ -51,7 +52,7 @@
 - [x] Ekran bloğunu çiz (02_Display: LCD 2-unit + JST-A/JST-B + backlight AO3400A switch)
 - [x] LED bloğunu çiz (05_LED: kart üstü 2x WS2812B zincir + harici JST çıkış, charger CHG/PGOOD LED'leri 00_Power'da)
 - [x] Ses bloğunu çiz (06_Audio: MAX98357A + 6-pin JST)
-- [x] Titreşim motoru bloğunu çiz (07_Motor: AO3400A + BAT54 flyback diyot)
+- [x] Titreşim motoru bloğunu çiz (07_Motor: AO3400A + SS14 flyback diyot)
 - [x] Sensör genişletme bloğunu çiz (03_Sensors_I2C0: ToF+AHT20/BMP280+MPU6050; 04_Sensors_I2C1_Expansion: 2x harici JST)
 - [x] LDR + TTP223 x2 + UART çıkışı çizildi (08_Misc_IO)
 - [x] Kullanılmayan GPIO breakout'u (GPIO48, 3-pin header: 3V3/GND/DATA) 01_MCU'da

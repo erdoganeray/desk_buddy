@@ -135,7 +135,7 @@ TJ(REG)=125°C (bu noktada IC şarj akımını otomatik kısar), TJ(OFF)=155°C.
 1. **WS2812B'ler (kart üstü + harici) artık OUT/pil rayından beslenecek** (MAX98357A/motor ile aynı mantık, VCC net değişikliği — GPIO/veri hattı değişmiyor). Elektriksel gerekçe: WS2812B "high" eşiği 0.7×VDD; pil aralığında (3.0-4.2V) bu 2.1-2.94V arası kalır, ESP32'nin 3.3V GPIO çıkışı bunun her zaman üzerinde — seviye kaydırıcı gerekmez. Bu tek değişiklik 360mA'i LDO'dan alır.
 2. **Backlight (LED pini) de OUT/pil rayına taşındı — teyit edildi ve netleşti** (satıcı spec sayfası: "Güç Girişi: 3.3V veya 5V", "Arka Aydınlatma: 4 beyaz LED"). LED, VCC'den (lojik/SPI besleme) ayrı bir pin, tek yönlü bir yük (ESP32'ye sinyal geri göndermiyor) — bu yüzden pil rayına taşınması güvenli. **VCC (lojik) ise kasıtlı olarak 3.3V'ta bırakıldı** — SDO(MISO)/T_DO hatları ESP32'ye geri sinyal gönderdiği için, VCC pil gerilimini görürse bu geri dönen sinyaller ESP32 GPIO'sunun güvenli sınırını aşabilir (modülün seviye kaydırma detayı teyit edilmeden riske atılmadı). Ayrıca **LED pinini direkt GPIO'dan sürme planı düzeltildi** — 80-120mA bir GPIO'nun kaldırabileceğinden fazla, artık AO3400A ile low-side switch olarak sürülüyor (bkz. Ekran bölümü). Bu iki adımla backlight'ın ~100mA'i de 3.3V rayından kalktı.
 3. **Sonuç: yeni sürekli taban ~140mA** (ESP32 ort.~100 + display lojik~25 + sensörler/touch~15), **WiFi patlamasıyla ~540mA** — 600mA limitinin rahat altında, sağlıklı marj.
-4. **Bulk kapasitör eklenmeli:** ESP32-S3'ün VDD3P3 pinlerine yakın **22-47µF** (Espressif'in kendi önerisi) — WiFi'nin µs seviyesindeki akım patlamalarını LDO'nun tepki hızından bağımsız karşılamak için. Bu olmadan WiFi aktifken rastgele reset/brownout riski var (bilinen bir ESP32 arıza modu).
+4. **Bulk kapasitör eklenmeli:** ESP32-S3'ün VDD3P3 pinlerine yakın **22-47µF** (Espressif'in kendi önerisi; seçilen: **47µF, 10V X5R, 1206** seramik, şematikte C6) — WiFi'nin µs seviyesindeki akım patlamalarını LDO'nun tepki hızından bağımsız karşılamak için. Bu olmadan WiFi aktifken rastgele reset/brownout riski var (bilinen bir ESP32 arıza modu).
 
 **Bonus — düşük pil eşiğiyle çapraz doğrulama:** Dropout ~125mV @300mA'ten, rayın düzgün 3.3V vermeye devam etmesi için pilin en az **~3.43V** olması gerektiği çıkıyor. Bunun altında ray pilin gerilimini takip ederek düşer — pil BMS kesme noktasına (~3.0V) gelmeden önce. Bu, önceki turlarda konuşulan "~3.4V'ta firmware uyarı/kapanma eşiği" fikrini hem hücre sağlığı hem LDO regülasyon sınırı açısından doğruluyor.
 
@@ -303,7 +303,7 @@ Stokta hem 4-pin (20 çift) hem 6-pin (10 çift) JST bol — kısıtlı değiliz
 
 - **Mini titreşim motoru, 3V, şaftsız, 10x3.4mm** — PCB'ye direkt lehimlenmeyecek, JST 2.0mm (2-pin) ile harici bağlanacak.
 - Sürücü: **AO3400A** (N-kanal MOSFET, low-side switch), gate MCU GPIO/PWM ile sürülecek.
-- Flyback diyot eklenmesi öneriliyor (küçük Schottky, örn. BAT54) — BOM'da yok, ayrıca temin edilecek. Motor küçük/coreless olduğu için endüktans düşük, risk düşük ama yine de eklenmesi iyi pratik.
+- Flyback diyot: **SS14** (Schottky, 1A 40V, SMA/DO-214AC; şematikte D5, footprint `D_SMA`) — BOM'da yok, satın alınacak. BAT54 (SOT-23) planlanmıştı, ancak sembol (2 pinli) ile SOT-23 footprint pin uyuşmazlığı vardı ve elde de yoktu. Motor küçük/coreless olduğu için endüktans düşük, risk düşük ama yine de eklenmesi iyi pratik.
 
 ## Bellek ve diğer lojik IC'ler — tasarımdan çıkarıldı
 

@@ -3183,7 +3183,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
 			(at 86.36 66.04 0)
 			(hide yes)
 			(show_name no)
@@ -3418,7 +3418,7 @@
 				)
 			)
 		)
-		(property "Footprint" "RF_Module:ESP32-S3-WROOM-1"
+		(property "Footprint" "Button_Switch_SMD:SW_SPST_PTS645Sx43SMTR92"
 			(at 88.9 49.53 0)
 			(hide yes)
 			(show_name no)
@@ -3736,7 +3736,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
 			(at 88.9 22.86 0)
 			(hide yes)
 			(show_name no)
@@ -3892,7 +3892,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_0805_2012Metric"
 			(at 88.9 29.21 0)
 			(hide yes)
 			(show_name no)
@@ -3971,7 +3971,7 @@
 				)
 			)
 		)
-		(property "Footprint" "RF_Module:ESP32-S3-WROOM-1"
+		(property "Footprint" "Button_Switch_SMD:SW_SPST_PTS645Sx43SMTR92"
 			(at 88.9 31.75 0)
 			(hide yes)
 			(show_name no)
@@ -4127,7 +4127,7 @@
 				)
 			)
 		)
-		(property "Footprint" "RF_Module:ESP32-S3-WROOM-1"
+		(property "Footprint" "Button_Switch_SMD:SW_SPST_PTS645Sx43SMTR92"
 			(at 88.9 67.31 0)
 			(hide yes)
 			(show_name no)
@@ -4404,7 +4404,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
 			(at 86.36 48.26 0)
 			(hide yes)
 			(show_name no)
@@ -4483,7 +4483,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_SMD:C_1206_3216Metric"
 			(at 171.45 59.69 0)
 			(hide yes)
 			(show_name no)

@@ -1315,7 +1315,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_THT:R_Array_SIP4"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
 			(at 106.68 43.18 0)
 			(hide yes)
 			(show_name no)
@@ -1559,7 +1559,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_THT:R_Array_SIP4"
+		(property "Footprint" "Resistor_SMD:R_0805_2012Metric"
 			(at 106.68 36.83 0)
 			(hide yes)
 			(show_name no)

@@ -38,6 +38,7 @@ Detaylar ve açık sorular için [schematic-notes.md](schematic-notes.md) dosyas
 
 - `README.md` — bu dosya, genel bakış
 - `BOM.md` — satın alınmış komponent/entegre listesi ve notlar
+- `purchase-list.md` — satın alınacak parçalar ve 0805 R/C stok kontrol listesi
 - `schematic-notes.md` — şematik tasarım kararları, pin atamaları, açık sorular
 - `plan.md` — geliştirme süreci / yapılacaklar listesi
 - `kicad/` — KiCad proje dosyaları (KiCad üzerinden doldurulacak)
