@@ -60,6 +60,8 @@
 - [x] **ERC çalıştırıldı, tüm proje temiz: 0 hata, 0 uyarı** (kicad-cli ile her sayfa sonrası doğrulandı, sonunda tam proje taraması yapıldı)
 
 ## 5. PCB layout
+Ayrıntılı adım adım süreç, güncel durum ve açık sorunlar: [pcb-layout-plan.md](pcb-layout-plan.md)
+
 - [ ] Board outline + M3 montaj deliği
 - [ ] Komponent yerleşimi (konnektörler kenarlara, ekran alanı, LED görünürlüğü, hoparlör/motor sensörlerden uzak)
 - [ ] Routing
